@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>수빈공주 방탈출게임 💕</title>
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/fonts-ko/tway-air/src/fonts/webfonts/TwayAir.css');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Tway Air', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #ffe0f0 0%, #fff5f5 50%, #ffe0f0 100%);
+            color: #ff6b9d;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* 배경 하트 애니메이션 */
+        .heart-bg {
+            position: absolute;
+            font-size: 20px;
+            animation: float 6s ease-in-out infinite;
+            opacity: 0.3;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(10deg); }
+        }
+        
+        .container {
+            max-width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .game-header {
+            background: linear-gradient(90deg, #ffc0cb, #ffe0e6);
+            padding: 15px 10px;
+            text-align: center;
+            box-shadow: 0 2px 15px rgba(255, 182, 193, 0.3);
+            border-bottom: 3px solid #ffb6c1;
+        }
+        
+        .game-title {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #ff1493;
+            text-shadow: 2px 2px 4px rgba(255, 182, 193, 0.5);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .stage-info {
+            display: flex;
+            justify-content: space-around;
+            font-size: 14px;
+            color: #ff69b4;
+        }
+        
+        .hint-count {
+            color: #ff1493;
+        }
+        
+        .game-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .puzzle-container {
+            background: rgba(255, 255, 255, 0.9);
+            border: 3px solid #ffb6c1;
+            border-radius: 25px;
+            padding: 20px 15px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 5px 25px rgba(255, 182, 193, 0.4);
+            animation: bounceIn 0.6s ease-out;
+        }
+        
+        @keyframes bounceIn {
+            0% { opacity: 0; transform: scale(0.8); }
+            60% { transform: scale(1.1); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        
+        .puzzle-question {
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #ff1493;
+        }
+        
+        .emoji-decoration {
+            font-size: 35px;
+            margin: 10px 0;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .input-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .answer-input {
+            flex: 1;
+            padding: 15px;
+            font-size: 18px;
+            border: 2px solid #ffb6c1;
+            border-radius: 15px;
+            background: #fff5f5;
+            color: #ff1493;
+            text-align: center;
+            outline: none;
+            transition: all 0.3s;
+        }
+        
+        .answer-input:focus {
+            border-color: #ff69b4;
+            box-shadow: 0 0 10px rgba(255, 182, 193, 0.5);
+        }
+        
+        .submit-btn {
+            padding: 15px 30px;
+            font-size: 18px;
+            background: linear-gradient(135deg, #ff6b9d, #ff1493);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 3px 10px rgba(255, 20, 147, 0.3);
+        }
+        
+        .submit-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .hint-btn, .answer-btn, .prev-btn {
+            flex: 1;
+            padding: 12px;
+            font-size: 16px;
+            border: 2px solid #ff69b4;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .hint-btn {
+            background: linear-gradient(135deg, #ffc0cb, #ffb6c1);
+            color: #ff1493;
+        }
+        
+        .answer-btn {
+            background: linear-gradient(135deg, #ffb6c1, #ff8fa3);
+            color: white;
+        }
+        
+        .prev-btn {
+            background: linear-gradient(135deg, #ff9eb5, #ffb6c1);
+            color: white;
+        }
+        
+        .hint-btn:hover, .answer-btn:hover, .prev-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 20, 147, 0.3);
+        }
+        
+        .hint-text {
+            background: #ffe0f0;
+            padding: 15px;
+            border-radius: 15px;
+            margin-top: 15px;
+            font-size: 16px;
+            color: #ff69b4;
+            display: none;
+            border: 2px dashed #ffb6c1;
+        }
+        
+        .answer-reveal {
+            background: #fff0f5;
+            padding: 15px;
+            border-radius: 15px;
+            margin-top: 15px;
+            font-size: 18px;
+            color: #ff1493;
+            display: none;
+            border: 2px solid #ff69b4;
+            font-weight: bold;
+        }
+        
+        .success-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 182, 193, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .success-content {
+            background: white;
+            padding: 40px;
+            border-radius: 30px;
+            text-align: center;
+            animation: heartBeat 0.8s;
+            border: 3px solid #ff69b4;
+            box-shadow: 0 10px 30px rgba(255, 20, 147, 0.3);
+            max-width: 90%;
+        }
+        
+        @keyframes heartBeat {
+            0% { transform: scale(1); }
+            25% { transform: scale(1.3); }
+            50% { transform: scale(1); }
+            75% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+        
+        .success-title {
+            font-size: 32px;
+            margin-bottom: 20px;
+            color: #ff1493;
+        }
+        
+        .next-stage-btn {
+            padding: 15px 40px;
+            font-size: 20px;
+            background: linear-gradient(135deg, #ff6b9d, #ff1493);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-top: 20px;
+            box-shadow: 0 5px 15px rgba(255, 20, 147, 0.3);
+        }
+        
+        .start-screen {
+            text-align: center;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 30px;
+            border: 3px solid #ffb6c1;
+            box-shadow: 0 10px 30px rgba(255, 182, 193, 0.4);
+        }
+        
+        .start-title {
+            font-size: 36px;
+            color: #ff1493;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(255, 182, 193, 0.5);
+        }
+        
+        .start-description {
+            font-size: 18px;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            color: #ff69b4;
+        }
+        
+        .start-btn {
+            padding: 20px 50px;
+            font-size: 22px;
+            background: linear-gradient(135deg, #ff6b9d, #ff1493);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            animation: pulse 2s infinite;
+            box-shadow: 0 5px 20px rgba(255, 20, 147, 0.4);
+        }
+        
+        .wrong-answer {
+            animation: shake 0.5s;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        .final-message {
+            font-size: 20px;
+            line-height: 1.8;
+            color: #ff69b4;
+            margin: 20px 0;
+        }
+        
+        .love-message-input {
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            border: 2px solid #ffb6c1;
+            border-radius: 15px;
+            background: #fff5f5;
+            color: #ff1493;
+            margin-bottom: 20px;
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .love-display {
+            background: #fff0f5;
+            padding: 20px;
+            border-radius: 20px;
+            margin: 20px 0;
+            border: 3px solid #ff69b4;
+            font-size: 20px;
+            color: #ff1493;
+            line-height: 1.8;
+        }
+        
+        .capture-instruction {
+            background: #ffe0f0;
+            padding: 15px;
+            border-radius: 15px;
+            margin-top: 20px;
+            font-size: 18px;
+            color: #ff1493;
+            border: 2px dashed #ffb6c1;
+            animation: pulse 2s infinite;
+        }
+    </style>
+</head>
+<body>
+    <!-- 배경 하트들 -->
+    <div class="heart-bg" style="top: 10%; left: 10%;">💕</div>
+    <div class="heart-bg" style="top: 20%; left: 80%; animation-delay: 1s;">💖</div>
+    <div class="heart-bg" style="top: 60%; left: 15%; animation-delay: 2s;">💗</div>
+    <div class="heart-bg" style="top: 70%; left: 75%; animation-delay: 3s;">💝</div>
+    <div class="heart-bg" style="top: 40%; left: 90%; animation-delay: 4s;">💓</div>
+    
+    <div class="container">
+        <div class="game-header">
+            <h1 class="game-title">💕 수빈공주 방탈출게임 💕</h1>
+            <div class="stage-info">
+                <span>🎮 스테이지: <span id="currentStage">0</span>/10</span>
+                <span class="hint-count">💡 힌트: <span id="hintCount">3</span>개</span>
+            </div>
+        </div>
+        
+        <div class="game-content" id="gameContent">
+            <div class="start-screen">
+                <h2 class="start-title">💖 이석님 어서오세요! 💖</h2>
+                <div class="emoji-decoration">👸💕🤴</div>
+                <p class="start-description">
+                    두분만 아는 비밀 문제들!<br>
+                    수빈님과의 추억을 떠올리며 풀어보세요~<br>
+                    모든 문제를 풀면 특별한 선물이 기다려요! 🎁
+                </p>
+                <button class="start-btn" onclick="startGame()">💕 게임 시작하기 💕</button>
+            </div>
+        </div>
+        
+        <div class="success-modal" id="successModal">
+            <div class="success-content">
+                <h2 class="success-title">🎉 정답이에요! 🎉</h2>
+                <div class="emoji-decoration">💕💖💗</div>
+                <p id="successMessage"></p>
+                <button class="next-stage-btn" onclick="nextStage()">다음 문제로 💕</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let currentStage = 0;
+        let hintsRemaining = 3;
+        let hintUsed = false;
+        let answerRevealed = false;
+        let userLoveMessage = "";
+        
+        const puzzles = [
+            {
+                question: "수빈공주와 왕자님이 처음 만난 곳은?",
+                emoji: "👮‍♂️💕",
+                answer: "부천원미경찰서",
+                hint: "ㅂㅊㅇㅁㄱㅊㅅ",
+                successMessage: "부천원미경찰서! 운명적인 첫 만남이었네요!"
+            },
+            {
+                question: "우리가 사귄 날짜는 언제일까요?",
+                emoji: "📅💑",
+                answer: "4월19일",
+                hint: "4월 ㅅㄱ일",
+                successMessage: "4월 19일! 잊을 수 없는 특별한 날이죠!"
+            },
+            {
+                question: "첫 데이트 때 뭘 먹었을까요?",
+                emoji: "🍝💕",
+                answer: "파스타",
+                hint: "ㅍㅅㅌ",
+                successMessage: "파스타! 로맨틱한 첫 데이트였겠네요!"
+            },
+            {
+                question: "수빈공주 폰에 남편이 뭐라고 저장되어 있을까요?",
+                emoji: "📱🖤",
+                answer: "석이🖤",
+                hint: "ㅅㅇ + 검은하트",
+                successMessage: "석이🖤 애정 가득한 이름이네요!"
+            },
+            {
+                question: "수빈공주의 키는 몇 cm일까요?",
+                emoji: "👸📏",
+                answer: "166cm",
+                hint: "백육십ㅇㅠㅅcm",
+                successMessage: "166cm! 완벽한 공주님 키예요!"
+            },
+            {
+                question: "수빈공주의 혈액형은?",
+                emoji: "💉❤️",
+                answer: "A형",
+                hint: "ㅇㅇ형 (첫 번째 알파벳)",
+                successMessage: "A형! 섬세하고 다정한 A형이시군요!"
+            },
+            {
+                question: "수빈이의 원래 유행어는 뭘까요?",
+                emoji: "😢💬",
+                answer: "수비슬퍼",
+                hint: "ㅅㅂㅅㅍ",
+                successMessage: "수비슬퍼! 귀여운 유행어네요!"
+            },
+            {
+                question: "수비의 발 사이즈는?",
+                emoji: "👟💕",
+                answer: "245",
+                hint: "이백ㅅㅅㅇ",
+                successMessage: "245! 기억하고 계시는군요!"
+            },
+            {
+                question: "수비의 요즘 유행어는?",
+                emoji: "🤷‍♀️💭",
+                answer: "몰라",
+                hint: "ㅁㄹ",
+                successMessage: "몰라! ㅋㅋㅋ 귀여운 유행어예요!"
+            },
+            {
+                question: "수비를 사랑하나요? 얼만큼요?",
+                emoji: "💕∞💕",
+                answer: "special",
+                hint: "사랑한다는 마음을 표현해주세요 💕",
+                successMessage: "사랑이 느껴져요! 💕",
+                isLoveQuestion: true
+            }
+        ];
+        
+        function startGame() {
+            currentStage = 0;
+            hintsRemaining = 3;
+            document.getElementById('currentStage').textContent = '1';
+            document.getElementById('hintCount').textContent = hintsRemaining;
+            showPuzzle();
+        }
+        
+        function showPuzzle() {
+            hintUsed = false;
+            answerRevealed = false;
+            const puzzle = puzzles[currentStage];
+            
+            let inputHtml = puzzle.isLoveQuestion ? 
+                `<textarea class="love-message-input" id="answerInput" placeholder="사랑하는 마음을 표현해주세요 💕"></textarea>
+                 <button class="submit-btn" onclick="checkAnswer()">💕 전송하기 💕</button>` :
+                `<div class="input-container">
+                    <input type="text" class="answer-input" id="answerInput" placeholder="정답을 입력하세요 💕">
+                    <button class="submit-btn" onclick="checkAnswer()">확인</button>
+                </div>`;
+            
+            const content = `
+                <div class="puzzle-container">
+                    <div class="emoji-decoration">${puzzle.emoji}</div>
+                    <div class="puzzle-question">${puzzle.question}</div>
+                    ${inputHtml}
+                    <div class="button-group">
+                        ${currentStage > 0 ? '<button class="prev-btn" onclick="prevStage()">⬅️ 이전문제</button>' : ''}
+                        <button class="hint-btn" onclick="showHint()" ${hintsRemaining <= 0 ? 'disabled style="opacity: 0.5;"' : ''}>💡 힌트 (${hintsRemaining}개)</button>
+                        ${!puzzle.isLoveQuestion ? '<button class="answer-btn" onclick="showAnswer()">🔍 정답보기</button>' : ''}
+                    </div>
+                    <div class="hint-text" id="hintText"></div>
+                    <div class="answer-reveal" id="answerReveal"></div>
+                </div>
+            `;
+            document.getElementById('gameContent').innerHTML = content;
+            document.getElementById('answerInput').focus();
+            
+            if (!puzzle.isLoveQuestion) {
+                document.getElementById('answerInput').addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') checkAnswer();
+                });
+            }
+        }
+        
+        function prevStage() {
+            if (currentStage > 0) {
+                currentStage--;
+                document.getElementById('currentStage').textContent = currentStage + 1;
+                showPuzzle();
+            }
+        }
+        
+        function checkAnswer() {
+            const puzzle = puzzles[currentStage];
+            const userAnswer = document.getElementById('answerInput').value.trim();
+            
+            if (puzzle.isLoveQuestion) {
+                if (userAnswer.length > 0) {
+                    userLoveMessage = userAnswer;
+                    showSuccess(userAnswer);
+                }
+            } else {
+                const correctAnswer = puzzle.answer.replace(/\s/g, '').toLowerCase();
+                const cleanUserAnswer = userAnswer.replace(/\s/g, '').toLowerCase();
+                
+                if (cleanUserAnswer === correctAnswer || answerRevealed) {
+                    showSuccess();
+                } else {
+                    document.querySelector('.puzzle-container').classList.add('wrong-answer');
+                    setTimeout(() => {
+                        document.querySelector('.puzzle-container').classList.remove('wrong-answer');
+                    }, 500);
+                    document.getElementById('answerInput').value = '';
+                }
+            }
+        }
+        
+        function showHint() {
+            if (hintsRemaining > 0 && !hintUsed) {
+                hintsRemaining--;
+                hintUsed = true;
+                document.getElementById('hintCount').textContent = hintsRemaining;
+                document.querySelector('.hint-btn').textContent = `💡 힌트 (${hintsRemaining}개)`;
+                if (hintsRemaining <= 0) {
+                    document.querySelector('.hint-btn').disabled = true;
+                    document.querySelector('.hint-btn').style.opacity = '0.5';
+                }
+                document.getElementById('hintText').style.display = 'block';
+                document.getElementById('hintText').textContent = `힌트: ${puzzles[currentStage].hint}`;
+            }
+        }
+        
+        function showAnswer() {
+            answerRevealed = true;
+            document.getElementById('answerReveal').style.display = 'block';
+            document.getElementById('answerReveal').textContent = `정답: ${puzzles[currentStage].answer}`;
+            document.getElementById('answerInput').value = puzzles[currentStage].answer;
+        }
+        
+        function showSuccess(loveMessage) {
+            const puzzle = puzzles[currentStage];
+            if (puzzle.isLoveQuestion && loveMessage) {
+                document.getElementById('successMessage').innerHTML = 
+                    `"${loveMessage}"<br><br>너무 감동적이에요! 💕 수빈공주님을 정말 사랑하시는군요!`;
+            } else {
+                document.getElementById('successMessage').textContent = puzzle.successMessage;
+            }
+            document.getElementById('successModal').style.display = 'flex';
+        }
+        
+        function nextStage() {
+            currentStage++;
+            document.getElementById('successModal').style.display = 'none';
+            
+            if (currentStage < puzzles.length) {
+                document.getElementById('currentStage').textContent = currentStage + 1;
+                showPuzzle();
+            } else {
+                // 게임 완료
+                document.getElementById('gameContent').innerHTML = `
+                    <div class="start-screen">
+                        <h2 class="start-title">🏆 모든 방탈출 성공! 🏆</h2>
+                        <div class="emoji-decoration">👸💕🤴</div>
+                        <p class="final-message">
+                            수빈공주님의 모든 방을 탈출했어요!<br>
+                            사용한 힌트: ${3 - hintsRemaining}개
+                        </p>
+                        
+                        <div class="love-display">
+                            <h3 style="color: #ff1493; margin-bottom: 15px;">💕 이석님의 사랑 고백 💕</h3>
+                            <p style="font-style: italic;">"${userLoveMessage}"</p>
+                            <br>
+                            <p style="font-size: 24px; font-weight: bold;">우와~ 이만큼 사랑하시는군요! 😍</p>
+                        </div>
+                        
+                        <div class="capture-instruction">
+                            📸 이 화면을 캡쳐해서 수빈님께 전송하세요! 📸<br>
+                            사랑의 증거를 남겨보세요 💕
+                        </div>
+                        
+                        <div class="emoji-decoration" style="margin-top: 20px;">💑💖💗💝💓</div>
+                        <button class="start-btn" onclick="startGame()">💕 다시 플레이하기 💕</button>
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>
