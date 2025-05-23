@@ -5,13 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>수빈공주 방탈출게임 💕</title>
     <style>
-        @import url('https://cdn.jsdelivr.net/gh/fonts-ko/tway-air/src/fonts/webfonts/TwayAir.css');
+        @font-face {
+            font-family: 'Ownglyph_kimkonghae';
+            src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2408@1.0/Ownglyph_kimkonghae.woff2') format('woff2');
+            font-weight: normal;
+            font-style: normal;
+        }
         
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Tway Air', sans-serif;
+            font-family: 'Ownglyph_kimkonghae', sans-serif;
         }
         
         body {
@@ -124,12 +129,13 @@
         
         .input-container {
             display: flex;
+            flex-direction: column;
             gap: 10px;
             margin-bottom: 20px;
         }
         
         .answer-input {
-            flex: 1;
+            width: 100%;
             padding: 15px;
             font-size: 18px;
             border: 2px solid #ffb6c1;
@@ -147,6 +153,7 @@
         }
         
         .submit-btn {
+            width: 100%;
             padding: 15px 30px;
             font-size: 18px;
             background: linear-gradient(135deg, #ff6b9d, #ff1493);
