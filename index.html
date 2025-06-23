@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>소이홈 대본 구조 분석 - 문장별 매핑</title>
+    <title>소이홈 대본 구조 분석</title>
     <style>
         * {
             margin: 0;
@@ -12,226 +12,491 @@
         }
         
         body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+            background: #f5f5f7;
             min-height: 100vh;
-            padding: 20px;
+            color: #1d1d1f;
+            line-height: 1.4;
         }
         
         .container {
-            max-width: 1600px;
+            max-width: 1200px;
             margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            overflow: hidden;
+            padding: 40px 20px;
         }
         
         .header {
-            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
-            color: white;
-            padding: 40px;
             text-align: center;
+            margin-bottom: 60px;
         }
         
         .header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            font-size: 48px;
+            font-weight: 700;
+            color: #1d1d1f;
+            margin-bottom: 16px;
+            letter-spacing: -0.02em;
+        }
+        
+        .header p {
+            font-size: 21px;
+            color: #86868b;
+            font-weight: 400;
         }
         
         .legend {
             display: flex;
             justify-content: center;
-            gap: 20px;
-            margin-top: 20px;
+            gap: 24px;
+            margin: 40px 0 60px 0;
             flex-wrap: wrap;
         }
         
         .legend-item {
             display: flex;
             align-items: center;
-            background: rgba(255,255,255,0.2);
-            padding: 8px 16px;
+            background: white;
+            padding: 12px 20px;
             border-radius: 20px;
-            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border: 1px solid #e5e5e7;
         }
         
         .legend-color {
-            width: 12px;
-            height: 12px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
             margin-right: 8px;
         }
         
-        .hook { background: #ff6b6b; }
-        .problem { background: #4ecdc4; }
-        .solution { background: #45b7d1; }
-        .cta { background: #96ceb4; }
+        .legend-text {
+            font-size: 14px;
+            font-weight: 500;
+            color: #1d1d1f;
+        }
+        
+        .hook { background: #007AFF; }
+        .problem { background: #FF3B30; }
+        .solution { background: #34C759; }
+        .cta { background: #FF9500; }
+        
+        .stats-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 60px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 32px 24px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border: 1px solid #e5e5e7;
+        }
+        
+        .stat-number {
+            font-size: 36px;
+            font-weight: 700;
+            color: #007AFF;
+            margin-bottom: 8px;
+        }
+        
+        .stat-label {
+            font-size: 16px;
+            color: #86868b;
+            font-weight: 500;
+        }
         
         .products-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
-            gap: 30px;
-            padding: 40px;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 32px;
+            margin-bottom: 80px;
         }
         
-        .product-analysis {
-            background: #f8f9fa;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        .product-card {
+            background: white;
+            border-radius: 16px;
+            padding: 0;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.1);
+            border: 1px solid #e5e5e7;
+            overflow: hidden;
+            transition: all 0.3s ease;
         }
         
-        .product-title {
-            font-size: 1.5em;
-            font-weight: bold;
-            color: #2c3e50;
-            margin-bottom: 20px;
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .product-header {
+            background: #1d1d1f;
+            color: white;
+            padding: 24px;
             display: flex;
             align-items: center;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
-            margin: -25px -25px 20px -25px;
         }
         
         .product-icon {
-            font-size: 1.5em;
-            margin-right: 15px;
+            font-size: 24px;
+            margin-right: 16px;
         }
         
-        .sentence-block {
-            margin-bottom: 15px;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        .product-title {
+            font-size: 20px;
+            font-weight: 600;
         }
         
-        .sentence-header {
-            padding: 10px 15px;
-            font-weight: bold;
+        .product-content {
+            padding: 24px;
+        }
+        
+        .sentence-analysis {
+            margin-bottom: 24px;
+        }
+        
+        .sentence-number {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #f5f5f7;
+            color: #1d1d1f;
+            text-align: center;
+            line-height: 24px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 12px;
+        }
+        
+        .sentence-phase {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
             color: white;
-            font-size: 0.9em;
+            margin-bottom: 8px;
         }
         
-        .sentence-content {
-            padding: 15px;
-            background: white;
+        .phase-hook { background: #007AFF; }
+        .phase-problem { background: #FF3B30; }
+        .phase-solution { background: #34C759; }
+        .phase-cta { background: #FF9500; }
+        
+        .sentence-text {
+            font-size: 16px;
+            line-height: 1.5;
+            color: #1d1d1f;
+            margin: 12px 0;
+            padding: 16px;
+            background: #f5f5f7;
+            border-radius: 12px;
             border-left: 4px solid;
         }
         
-        .sentence-text {
-            font-size: 1em;
-            line-height: 1.6;
-            margin-bottom: 10px;
-            color: #2c3e50;
+        .text-hook { border-left-color: #007AFF; }
+        .text-problem { border-left-color: #FF3B30; }
+        .text-solution { border-left-color: #34C759; }
+        .text-cta { border-left-color: #FF9500; }
+        
+        .sentence-analysis-text {
+            font-size: 14px;
+            color: #86868b;
+            font-style: italic;
+            margin-top: 8px;
         }
         
-        .structure-label {
-            background: rgba(0,0,0,0.1);
-            padding: 4px 8px;
-            border-radius: 15px;
-            font-size: 0.8em;
-            color: #666;
-            display: inline-block;
-        }
-        
-        .hook-section {
-            background: #ff6b6b;
-            border-left-color: #ff6b6b;
-        }
-        
-        .problem-section {
-            background: #4ecdc4;
-            border-left-color: #4ecdc4;
-        }
-        
-        .solution-section {
-            background: #45b7d1;
-            border-left-color: #45b7d1;
-        }
-        
-        .cta-section {
-            background: #96ceb4;
-            border-left-color: #96ceb4;
-        }
-        
-        .pattern-analysis {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
+        .insights-section {
+            background: white;
+            border-radius: 16px;
             padding: 40px;
-            margin-top: 40px;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.1);
+            border: 1px solid #e5e5e7;
+            margin-bottom: 40px;
         }
         
-        .pattern-title {
-            font-size: 2em;
+        .insights-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1d1d1f;
+            margin-bottom: 32px;
             text-align: center;
-            margin-bottom: 30px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
         
-        .pattern-grid {
+        .insights-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 32px;
         }
         
-        .pattern-card {
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 25px;
-            border: 1px solid rgba(255,255,255,0.2);
+        .insight-card {
+            background: #f5f5f7;
+            padding: 24px;
+            border-radius: 12px;
         }
         
-        .pattern-card h3 {
-            font-size: 1.3em;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
+        .insight-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1d1d1f;
+            margin-bottom: 16px;
         }
         
-        .pattern-examples {
+        .insight-list {
             list-style: none;
         }
         
-        .pattern-examples li {
-            padding: 8px 0;
+        .insight-list li {
+            font-size: 14px;
+            color: #515154;
+            margin-bottom: 8px;
+            padding-left: 16px;
             position: relative;
-            padding-left: 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
         }
         
-        .pattern-examples li::before {
-            content: "▸";
+        .insight-list li::before {
+            content: "•";
+            color: #007AFF;
+            font-size: 16px;
             position: absolute;
             left: 0;
-            color: #feca57;
-            font-weight: bold;
         }
         
-        @media (max-width: 768px) {
-            .products-grid {
-                grid-template-columns: 1fr;
-                padding: 20px;
-            }
-            
-            .header {
-                padding: 20px;
+        .key-finding {
+            background: linear-gradient(135deg, #007AFF, #5856D6);
+            color: white;
+            padding: 32px;
+            border-radius: 16px;
+            text-align: center;
+            margin-top: 40px;
+        }
+        
+        .key-finding h3 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+        
+        .key-finding p {
+            font-size: 18px;
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+        
+        .phase-distribution {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin: 32px 0;
+        }
+        
+        .phase-stat {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .phase-stat-number {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        
+        .phase-stat-label {
+            font-size: 12px;
+            color: #86868b;
+            font-weight: 500;
+        }
+        
+        .analyzer-section {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.1);
+            border: 1px solid #e5e5e7;
+            margin-bottom: 60px;
+        }
+        
+        .analyzer-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        
+        .analyzer-header h2 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1d1d1f;
+            margin-bottom: 12px;
+        }
+        
+        .analyzer-header p {
+            font-size: 16px;
+            color: #86868b;
+        }
+        
+        .analyzer-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .input-section {
+            margin-bottom: 32px;
+        }
+        
+        #scriptInput {
+            width: 100%;
+            min-height: 200px;
+            padding: 20px;
+            border: 2px solid #e5e5e7;
+            border-radius: 12px;
+            font-size: 16px;
+            font-family: inherit;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+            margin-bottom: 16px;
+        }
+        
+        #scriptInput:focus {
+            outline: none;
+            border-color: #007AFF;
+        }
+        
+        #analyzeBtn {
+            background: #007AFF;
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        #analyzeBtn:hover {
+            background: #0056b3;
+        }
+        
+        #analyzeBtn:disabled {
+            background: #86868b;
+            cursor: not-allowed;
+        }
+        
+        .analysis-result {
+            background: #f5f5f7;
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 24px;
+        }
+        
+        .result-header h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1d1d1f;
+            margin-bottom: 20px;
+        }
+        
+        .analysis-card {
+            background: white;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            border-left: 4px solid #007AFF;
+        }
+        
+        .analysis-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1d1d1f;
+            margin-bottom: 8px;
+        }
+        
+        .analysis-content {
+            font-size: 14px;
+            color: #515154;
+            line-height: 1.5;
+        }
+        
+        .score-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .score-item {
+            background: white;
+            padding: 16px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .score-value {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        
+        .score-label {
+            font-size: 12px;
+            color: #86868b;
+        }
+        
+        .suggestions {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            border-left: 4px solid #34C759;
+        }
+        
+        .suggestions h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1d1d1f;
+            margin-bottom: 12px;
+        }
+        
+        .suggestion-item {
+            margin-bottom: 8px;
+            padding-left: 16px;
+            position: relative;
+            font-size: 14px;
+            color: #515154;
+        }
+        
+        .suggestion-item::before {
+            content: "💡";
+            position: absolute;
+            left: 0;
+        }
+            .container {
+                padding: 20px 16px;
             }
             
             .header h1 {
-                font-size: 2em;
+                font-size: 32px;
+            }
+            
+            .header p {
+                font-size: 18px;
+            }
+            
+            .products-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
             }
             
             .legend {
-                gap: 10px;
+                gap: 12px;
             }
             
-            .pattern-grid {
-                grid-template-columns: 1fr;
+            .phase-distribution {
+                grid-template-columns: repeat(2, 1fr);
             }
         }
     </style>
@@ -239,338 +504,334 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>📝 소이홈 대본 구조 분석</h1>
-            <p>기승전결 구조를 실제 문장에 적용한 분석</p>
-            
-            <div class="legend">
-                <div class="legend-item">
-                    <div class="legend-color hook"></div>
-                    <span>기(起) - 훅/후킹 멘트</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color problem"></div>
-                    <span>승(承) - 문제제기/공감대</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color solution"></div>
-                    <span>전(轉) - 제품소개/솔루션</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color cta"></div>
-                    <span>결(結) - 행동유도/CTA</span>
-                </div>
+            <h1>소이홈 대본 구조 분석</h1>
+            <p>문장별 기승전결 패턴 연구</p>
+        </div>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color hook"></div>
+                <span class="legend-text">기(起) - 훅/관심 끌기</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color problem"></div>
+                <span class="legend-text">승(承) - 문제제기/공감대</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color solution"></div>
+                <span class="legend-text">전(轉) - 제품소개/솔루션</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color cta"></div>
+                <span class="legend-text">결(結) - 행동유도</span>
+            </div>
+        </div>
+        
+        <div class="stats-section">
+            <div class="stat-card">
+                <div class="stat-number">6</div>
+                <div class="stat-label">분석 대본 수</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">3.3</div>
+                <div class="stat-label">전(轉) 평균 문장수</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">8.5</div>
+                <div class="stat-label">평균 총 문장수</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">100%</div>
+                <div class="stat-label">CTA 포함률</div>
             </div>
         </div>
         
         <div class="products-grid">
-            <!-- 벙커침대 -->
-            <div class="product-analysis">
-                <div class="product-title">
-                    <span class="product-icon">🛏️</span>
-                    수납 벙커침대
-                </div>
-                
-                <div class="sentence-block">
-                    <div class="sentence-header hook-section">기(起) - 문제 상황 제시형 훅</div>
-                    <div class="sentence-content hook-section">
-                        <div class="sentence-text">"아이가 침대를 너무 갖고 싶어 하는데 방이 좁아서 고민이었어요."</div>
-                        <div class="structure-label">개인적 고민 공유 + 공간 제약 문제</div>
-                    </div>
-                </div>
-                
-                <div class="sentence-block">
-                    <div class="sentence-header solution-section">전(轉) - 해결책 발견</div>
-                    <div class="sentence-content solution-section">
-                        <div class="sentence-text">"근데 이런 침대가 있더라고요."</div>
-                        <div class="structure-label">우연한 발견 표현</div>
-                    </div>
-                </div>
-                
-                <div class="sentence-block">
-                    <div class="sentence-header solution-section">전(轉) - 핵심 기능 설명</div>
-                    <div class="sentence-content solution-section">
-                        <div class="sentence-text">"침대 프레임 안쪽에는 이불을 앞쪽에는 자주 입는 아이옷이나 장난감을 정리할 수 있고 계단마저 수납장으로 활용 가능해서 공간활용 끝판왕이에요."</div>
-                        <div class="structure-label">다목적 기능 나열 + 결론적 평가</div>
-                    </div>
-                </div>
-                
-                <div class="sentence-block">
-                    <div class="sentence-header solution-section">전(轉) - 만족감 표현</div>
-                    <div class="sentence-content solution-section">
-                        <div class="sentence-text">"작은방이라 침대 수납장 따로 놓기 애매했는데 이거 하나면 끝이네요. 가격도 가성비 대박이고 후기도 너무 좋아서 추천드려요."</div>
-                        <div class="structure-label">Before & After 비교 + 경제성 어필 + 사회적 증거</div>
-                    </div>
-                </div>
-                
-                <div class="sentence-block">
-                    <div class="sentence-header cta-section">결(結) - 행동 유도</div>
-                    <div class="sentence-content cta-section">
-                        <div class="sentence-text">"댓글에 '와!' 남겨주시면 DM으로 링크 보내드릴게요~"</div>
-                        <div class="structure-label">키워드 댓글 + DM 약속</div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 샤크 선풍기 -->
-            <div class="product-analysis">
-                <div class="product-title">
-                    <span class="product-icon">🌪️</span>
-                    샤크 무날개 선풍기
-                </div>
-                
-                <div class="sentence-block">
-                    <div class="sentence-header hook-section">기(起) - 강한 표현 훅</div>
-                    <div class="sentence-content hook-section">
-                        <div class="sentence-text">"와, 이번에 샤크 미쳤습니다"</div>
-                        <div class="structure-label">감탄사 + 브랜드 강조 + 과장 표현</div>
-                    </div>
-                </div>
-                
-                <div class="sentence-block">
-                    <div class="sentence-header problem-section">승(承) - 상황 설명 및 발견</div>
-                    <div class="sentence-content problem-section">
-                        <div class="sentence-text">"남편이 벌써 덥다고 선풍기 알아보다가 발견한 해외에서 품절 대란인 샤크선풍기예요."</div>
-                        <div class="structure-label">가족 경험담 + 계절적 필요성 + 해외 트렌드</div>
-                    </div>
-                </div>
-                
-                <div class="sentence-block">
-                    <div class="sentence-header solution-section">전(轉) - 제품 차별점</div>
-                    <div class="sentence-content solution-section">
-                        <div class="sentence-text">"날개 없는 선풍기여서 안전하고 세련된 디자인인데 이게 360도 각도 조절도 가능해요. 심지어 각 날개도 따로따로 조절이 가능하대요."</div>
-                        <div class="structure-label">핵심 차별점 + 구체적 기능 + 놀라움 표현</div>
-                    </div>
-                </div>
-                
-                <div class="sentence-block">
-                    <div class="sentence-header solution-section">전(轉) - 사용 시나리오</div>
-                    <div class="sentence-content solution-section">
-                        <div class="sentence-text">"이제 침대에서 선풍기로 절대 싸울 일 없겠는데요?"</div>
-                        <div class="structure-label">구체적 상황 해결 + 질문형 확신</div>
-                    </div>
-                </div>
-                
-                <div class="sentence-block">
-                    <div class="sentence-header cta-section">결(結) - 행동 유도</div>
-                    <div class="sentence-content cta-section">
-                        <div class="sentence-text">"제가 정품 파는곳 링크 가져왔어요 댓글에 '대박' 적어주시면 DM으로 링크 빠르게 보내드릴게요"</div>
-                        <div class="structure-label">신뢰성 구축 + 키워드 댓글 + 즉시성 강조</div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- LED 간접조명 -->
-            <div class="product-analysis">
-                <div class="product-title">
-                    <span class="product-icon">💡</span>
-                    LED 간접조명
-                </div>
-                
-                <div class="sentence-block">
-                    <div class="sentence-header hook-section">기(起) - 놀라움 + 자기의심</div>
-                    <div class="sentence-content hook-section">
-                        <div class="sentence-text">"우와 이거 저만 몰랐나요?"</div>
-                        <div class="structure-label">FOMO 유발 + 정보 격차 불안</div>
-                    </div>
-                </div>
-                
-                <div class="sentence-block">
-                    <div class="sentence-header problem-section">승(承) - 상황 설명 및 경제적 부담</div>
-                    <div class="sentence-content problem-section">
-                        <div class="sentence-text">"이번에 인테리어하고 입주하는 신혼부부인데요. 간접등을 이곳저곳설치하려니 추가금이 부담돼서 못했거든요."</div>
-                        <div class="structure-label">개인 상황 + 경제적 제약 + 포기한 욕구</div>
-                    </div>
-                </div>
-                
-                <div class="sentence-block">
-                    <div class="sentence-header solution-section">전(轉) - 발견의 놀라움</div>
-                    <div class="sentence-content solution-section">
-                        <div class="sentence-text">"근데 이 제품 발견하고 놀랐는데 가격 보고 더 놀랐어요."</div>
-                        <div class="structure-label">2단계 놀라움 (제품 → 가격)</div>
-                    </div>
-                </div>
-                
-                <div class="sentence-block">
-                    <div class="sentence-header solution-section">전(轉) - 설치 편의성 및 가족 반응</div>
-                    <div class="sentence-content solution-section">
-                        <div class="sentence-text">"일단 설치가 너무 쉬워서 남편이 신나가지고 막 꾸미더라고요. 가위로 잘라 길이 조절이 가능하고 에폭시 코팅으로 누전위험이 현저히 낮아요."</div>
-                        <div class="structure-label">편의성 + 가족 반응 + 구체적 기능 + 안전성</div>
-                    </div>
-                </div>
-                
-                <div class="sentence-block">
-                    <div class="sentence-header solution-section">전(轉) - 다양한 활용성</div>
-                    <div class="sentence-content solution-section">
-                        <div class="sentence-text">"16가지 색상 조절과 밝기 조절이 가능해서 침실이나 거실 주방에 활용 가능해요."</div>
-                        <div class="structure-label">구체적 수치 + 다목적 활용</div>
-                    </div>
-                </div>
-                
-                <div class="sentence-block">
-                    <div class="sentence-header cta-section">결(結) - 신뢰성 + 행동 유도</div>
-                    <div class="sentence-content cta-section">
-                        <div class="sentence-text">"제가 후기가 800가 넘는 제품으로 링크 가져왔어요. 댓글에 '쉽다' 적어주시면 DM으로 링크 바로 보내드릴게요"</div>
-                        <div class="structure-label">사회적 증거 + 키워드 댓글 + 즉시성</div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 우드 벽행거 -->
-            <div class="product-analysis">
-                <div class="product-title">
-                    <span class="product-icon">🪝</span>
-                    우드 벽행거
-                </div>
-                
-                <div class="sentence-block">
-                    <div class="sentence-header hook-section">기(起) - 현재 상황 제시</div>
-                    <div class="sentence-content hook-section">
-                        <div class="sentence-text">"이젠 행거도 공간 차지 않아요."</div>
-                        <div class="structure-label">기존 상식 뒤집기 + 공간 문제 해결</div>
-                    </div>
-                </div>
-                
-                <div class="sentence-block">
-                    <div class="sentence-header solution-section">전(轉) - 핵심 기능 설명</div>
-                    <div class="sentence-content solution-section">
-                        <div class="sentence-text">"이건 필요할 때마다 후크를 쏙 꺼내실 수 있는 행거예요. 옷은 물론 가방이나 모자 소품들도 정리할 수 있고요."</div>
-                        <div class="structure-label">핵심 차별점 + 다목적 활용</div>
-                    </div>
-                </div>
-                
-                <div class="sentence-block">
-                    <div class="sentence-header solution-section">전(轉) - 사용 후 만족감</div>
-                    <div class="sentence-content solution-section">
-                        <div class="sentence-text">"사용후에는 이렇게 착 닫으면 돼서 너무 편하고 깔끔하죠?"</div>
-                        <div class="structure-label">사용법 + 감정적 만족 + 질문형 확신</div>
-                    </div>
-                </div>
-                
-                <div class="sentence-block">
-                    <div class="sentence-header solution-section">전(轉) - 추가 장점</div>
-                    <div class="sentence-content solution-section">
-                        <div class="sentence-text">"일단 자리차지 않아서 너무 좋은데 원목 디자인이라 인테리어까지한 느낌이에요."</div>
-                        <div class="structure-label">공간 효율성 + 디자인 만족</div>
-                    </div>
-                </div>
-                
-                <div class="sentence-block">
-                    <div class="sentence-header solution-section">전(轉) - 개인적 활용 계획</div>
-                    <div class="sentence-content solution-section">
-                        <div class="sentence-text">"저라면 현관에 두고 매일 드는 가방과 우산 걸어둘것 같아요"</div>
-                        <div class="structure-label">구체적 사용 시나리오 제시</div>
-                    </div>
-                </div>
-                
-                <div class="sentence-block">
-                    <div class="sentence-header cta-section">결(結) - 행동 유도</div>
-                    <div class="sentence-content cta-section">
-                        <div class="sentence-text">"우드감성까지 챙긴 이 행거 댓글에 '쏙'적어주시면 DM보내드릴게요"</div>
-                        <div class="structure-label">감성적 정리 + 키워드 댓글</div>
-                    </div>
-                </div>
-            </div>
-            
             <!-- 입술 주름 방지 빨대 -->
-            <div class="product-analysis">
-                <div class="product-title">
+            <div class="product-card">
+                <div class="product-header">
                     <span class="product-icon">💋</span>
-                    입술 주름 방지 빨대
+                    <span class="product-title">입술 주름 방지 빨대 (6문장)</span>
                 </div>
-                
-                <div class="sentence-block">
-                    <div class="sentence-header hook-section">기(起) - 해외 트렌드</div>
-                    <div class="sentence-content hook-section">
-                        <div class="sentence-text">"요즘 해외에서 입빨대가 완전 핫해요."</div>
-                        <div class="structure-label">해외 트렌드 + 신조어 사용</div>
+                <div class="product-content">
+                    <div class="sentence-analysis">
+                        <span class="sentence-number">1</span>
+                        <span class="sentence-phase phase-hook">기(起)</span>
+                        <div class="sentence-text text-hook">"요즘 해외에서 입빨대가 완전 핫해요."</div>
+                        <div class="sentence-analysis-text">해외 트렌드 + 감정적 어필</div>
                     </div>
-                </div>
-                
-                <div class="sentence-block">
-                    <div class="sentence-header problem-section">승(承) - 기존 제품 문제점</div>
-                    <div class="sentence-content problem-section">
-                        <div class="sentence-text">"일자빨때는 입술을 모으게 돼서 주름이 생기는데 이건 입술을 모으지않고 마실 수 있어요."</div>
-                        <div class="structure-label">Before & After 직접 비교</div>
+                    
+                    <div class="sentence-analysis">
+                        <span class="sentence-number">2</span>
+                        <span class="sentence-phase phase-problem">승(承)</span>
+                        <div class="sentence-text text-problem">"일자빨때는 입술을 모우게 돼서 주름이 생기는데 이건 입술을 모우지않고 마실 수 있어요."</div>
+                        <div class="sentence-analysis-text">기존 문제점 + 새 제품 해결책</div>
                     </div>
-                </div>
-                
-                <div class="sentence-block">
-                    <div class="sentence-header problem-section">승(承) - 공감대 형성</div>
-                    <div class="sentence-content problem-section">
-                        <div class="sentence-text">"입술에 주름많으면 더 나이들어 보이는 거아시죠?"</div>
-                        <div class="structure-label">보편적 걱정 + 확신형 질문</div>
+                    
+                    <div class="sentence-analysis">
+                        <span class="sentence-number">3</span>
+                        <span class="sentence-phase phase-problem">승(承)</span>
+                        <div class="sentence-text text-problem">"입술에 주름많으면 더 나이들어 보이는 거아시죠?"</div>
+                        <div class="sentence-analysis-text">노화 걱정 공감대 형성</div>
                     </div>
-                </div>
-                
-                <div class="sentence-block">
-                    <div class="sentence-header solution-section">전(轉) - 장기적 효과</div>
-                    <div class="sentence-content solution-section">
-                        <div class="sentence-text">"이런 습관 하나하나가 노화를 늦출 수 있어요. 세척도 쉬워서 자주 쓰게될 이빨대"</div>
-                        <div class="structure-label">장기적 가치 + 편의성</div>
+                    
+                    <div class="sentence-analysis">
+                        <span class="sentence-number">4</span>
+                        <span class="sentence-phase phase-solution">전(轉)</span>
+                        <div class="sentence-text text-solution">"이런 습관 하나하나가 노화를 늦출 수 있어요."</div>
+                        <div class="sentence-analysis-text">장기적 효과 강조</div>
                     </div>
-                </div>
-                
-                <div class="sentence-block">
-                    <div class="sentence-header cta-section">결(結) - 행동 유도</div>
-                    <div class="sentence-content cta-section">
-                        <div class="sentence-text">"댓글에 '입술'적어주세요 DM 보내드릴게요~"</div>
-                        <div class="structure-label">키워드 댓글 + 친근한 톤</div>
+                    
+                    <div class="sentence-analysis">
+                        <span class="sentence-number">5</span>
+                        <span class="sentence-phase phase-solution">전(轉)</span>
+                        <div class="sentence-text text-solution">"세척도 쉬워서 자주 쓰게될 이빨대"</div>
+                        <div class="sentence-analysis-text">부가 장점 (편의성)</div>
+                    </div>
+                    
+                    <div class="sentence-analysis">
+                        <span class="sentence-number">6</span>
+                        <span class="sentence-phase phase-cta">결(結)</span>
+                        <div class="sentence-text text-cta">"댓글에 '입술'적어주세요 DM 보내드릴게요~"</div>
+                        <div class="sentence-analysis-text">키워드 댓글 + 행동 유도</div>
                     </div>
                 </div>
             </div>
             
             <!-- 나이키 리커버리 슈즈 -->
-            <div class="product-analysis">
-                <div class="product-title">
+            <div class="product-card">
+                <div class="product-header">
                     <span class="product-icon">👟</span>
-                    나이키 리커버리 슈즈
+                    <span class="product-title">나이키 리커버리 슈즈 (10문장)</span>
                 </div>
-                
-                <div class="sentence-block">
-                    <div class="sentence-header hook-section">기(起) - 해외 트렌드 + 브랜드</div>
-                    <div class="sentence-content hook-section">
-                        <div class="sentence-text">"요즘 해외에서 완전 핫템 나이키에서출시한 리액트 X 리즈벤 에잇이에에요."</div>
-                        <div class="structure-label">해외 트렌드 + 브랜드 신뢰성 + 구체적 제품명</div>
+                <div class="product-content">
+                    <div class="sentence-analysis">
+                        <span class="sentence-number">1</span>
+                        <span class="sentence-phase phase-hook">기(起)</span>
+                        <div class="sentence-text text-hook">"요즘 해외에서 완전 핫템 나이키에서출시한 리액트 X 리즈벤 에잇이에에요."</div>
+                        <div class="sentence-analysis-text">해외 트렌드 + 브랜드 신뢰성</div>
                     </div>
-                </div>
-                
-                <div class="sentence-block">
-                    <div class="sentence-header solution-section">전(轉) - 전문성 + 기능성</div>
-                    <div class="sentence-content solution-section">
-                        <div class="sentence-text">"운동 선수 회복용으로 출시한 리커버리슈즈인데 하루 종일 신어도 발이 안아플 정도로 쿠션감이 좋고 발등과 뒤꿈치까지 푹신하게 감싸줘서 착용감이대박이에요."</div>
-                        <div class="structure-label">전문성 + 구체적 효과 + 감각적 표현</div>
+                    
+                    <div class="sentence-analysis">
+                        <span class="sentence-number">2</span>
+                        <span class="sentence-phase phase-problem">승(承)</span>
+                        <div class="sentence-text text-problem">"운동 선수 회복용으로 출시한 리커버리슈즈인데 하루 종일 신어도 발이 안아플 정도로 쿠션감이 좋고 발등과 뒤꿈치까지 푹신하게 감싸줘서 착용감이대박이에요."</div>
+                        <div class="sentence-analysis-text">전문성 + 편안함 강조</div>
                     </div>
-                </div>
-                
-                <div class="sentence-block">
-                    <div class="sentence-header solution-section">전(轉) - 디자인 만족</div>
-                    <div class="sentence-content solution-section">
-                        <div class="sentence-text">"근데 이번에 디자인도 진짜 잘 뽑았는데요?"</div>
-                        <div class="structure-label">추가 장점 + 주관적 평가 + 질문형</div>
+                    
+                    <div class="sentence-analysis">
+                        <span class="sentence-number">5</span>
+                        <span class="sentence-phase phase-solution">전(轉)</span>
+                        <div class="sentence-text text-solution">"근데 이번에 디자인도 진짜 잘 뽑았는데요?"</div>
+                        <div class="sentence-analysis-text">디자인 칭찬</div>
                     </div>
-                </div>
-                
-                <div class="sentence-block">
-                    <div class="sentence-header solution-section">전(轉) - 다양한 활용성</div>
-                    <div class="sentence-content solution-section">
-                        <div class="sentence-text">"운동복뿐만 아니라 일상 코디에 매치해도 옷자린다는 소리 무조건 나와요."</div>
-                        <div class="structure-label">다목적 활용 + 예상 반응 + 확신 표현</div>
+                    
+                    <div class="sentence-analysis">
+                        <span class="sentence-number">6</span>
+                        <span class="sentence-phase phase-solution">전(轉)</span>
+                        <div class="sentence-text text-solution">"운동복뿐만 아니라 일상 코디에 매치해도 옷자린다는 소리 무조건 나와요."</div>
+                        <div class="sentence-analysis-text">다목적 활용 + 확신 표현</div>
                     </div>
-                </div>
-                
-                <div class="sentence-block">
-                    <div class="sentence-header solution-section">전(轉) - 기존 제품과 차별화</div>
-                    <div class="sentence-content solution-section">
-                        <div class="sentence-text">"이번여름 지겨운 크록스 말고 이거 신고싶으시다면"</div>
-                        <div class="structure-label">경쟁 제품 차별화 + 계절적 필요성</div>
-                    </div>
-                </div>
-                
-                <div class="sentence-block">
-                    <div class="sentence-header cta-section">결(結) - 행동 유도</div>
-                    <div class="sentence-content cta-section">
-                        <div class="sentence-text">"댓글에 '푹신' 적어주세요 DM 보내드릴게요~"</div>
-                        <div class="structure-label">키워드 댓글 + 친근한 마무리</div>
+                    
+                    <div class="sentence-analysis">
+                        <span class="sentence-number">9</span>
+                        <span class="sentence-phase phase-cta">결(結)</span>
+                        <div class="sentence-text text-cta">"이번여름 지겨운 크록스 말고 이거 신고싶으시다면 댓글에 '푹신' 적어주세요 DM 보내드릴게요~"</div>
+                        <div class="sentence-analysis-text">차별화 + 행동 유도</div>
                     </div>
                 </div>
             </div>
+            
+            <!-- 벙커침대 -->
+            <div class="product-card">
+                <div class="product-header">
+                    <span class="product-icon">🛏️</span>
+                    <span class="product-title">수납 벙커침대 (9문장)</span>
+                </div>
+                <div class="product-content">
+                    <div class="sentence-analysis">
+                        <span class="sentence-number">1</span>
+                        <span class="sentence-phase phase-hook">기(起)</span>
+                        <div class="sentence-text text-hook">"아이가 침대를 너무 갖고 싶어 하는데 방이 좁아서 고민이었어요."</div>
+                        <div class="sentence-analysis-text">개인적 고민 + 공간 문제</div>
+                    </div>
+                    
+                    <div class="sentence-analysis">
+                        <span class="sentence-number">3</span>
+                        <span class="sentence-phase phase-problem">승(承)</span>
+                        <div class="sentence-text text-problem">"근데 이런 침대가 있더라고요."</div>
+                        <div class="sentence-analysis-text">해결책 발견의 순간</div>
+                    </div>
+                    
+                    <div class="sentence-analysis">
+                        <span class="sentence-number">4</span>
+                        <span class="sentence-phase phase-solution">전(轉)</span>
+                        <div class="sentence-text text-solution">"침대 프레임 안쪽에는 이불을 앞쪽에는 자주 입는 아이옷이나 장난감을 정리할 수 있고 계단마저 수납장으로 활용 가능해서 공간활용 끝판왕이에요."</div>
+                        <div class="sentence-analysis-text">구체적 기능 + 완전성 강조</div>
+                    </div>
+                    
+                    <div class="sentence-analysis">
+                        <span class="sentence-number">8</span>
+                        <span class="sentence-phase phase-cta">결(結)</span>
+                        <div class="sentence-text text-cta">"댓글에 '와!' 남겨주시면 DM으로 링크 보내드릴게요~"</div>
+                        <div class="sentence-analysis-text">감정 표현 + 행동 유도</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 무날개 선풍기 -->
+            <div class="product-card">
+                <div class="product-header">
+                    <span class="product-icon">🌪️</span>
+                    <span class="product-title">샤크 무날개 선풍기 (7문장)</span>
+                </div>
+                <div class="product-content">
+                    <div class="sentence-analysis">
+                        <span class="sentence-number">1</span>
+                        <span class="sentence-phase phase-hook">기(起)</span>
+                        <div class="sentence-text text-hook">"와, 이번에 샤크 미쳤습니다"</div>
+                        <div class="sentence-analysis-text">감탄사 + 브랜드 강조</div>
+                    </div>
+                    
+                    <div class="sentence-analysis">
+                        <span class="sentence-number">2</span>
+                        <span class="sentence-phase phase-hook">기(起)</span>
+                        <div class="sentence-text text-hook">"남편이 벌써 덥다고 선풍기 알아보다가 발견한 해외에서 품절 대란인 샤크선풍기예요."</div>
+                        <div class="sentence-analysis-text">개인 상황 + 해외 트렌드</div>
+                    </div>
+                    
+                    <div class="sentence-analysis">
+                        <span class="sentence-number">4</span>
+                        <span class="sentence-phase phase-solution">전(轉)</span>
+                        <div class="sentence-text text-solution">"심지어 각 날개도 따로따로 조절이 가능하대요."</div>
+                        <div class="sentence-analysis-text">추가 기능 강조</div>
+                    </div>
+                    
+                    <div class="sentence-analysis">
+                        <span class="sentence-number">5</span>
+                        <span class="sentence-phase phase-solution">전(轉)</span>
+                        <div class="sentence-text text-solution">"이제 침대에서 선풍기로 절대 싸울 일 없겠는데요?"</div>
+                        <div class="sentence-analysis-text">감정적 어필 (부부 갈등 해결)</div>
+                    </div>
+                    
+                    <div class="sentence-analysis">
+                        <span class="sentence-number">7</span>
+                        <span class="sentence-phase phase-cta">결(結)</span>
+                        <div class="sentence-text text-cta">"댓글에 '대박' 적어주시면 DM으로 링크 빠르게 보내드릴게요"</div>
+                        <div class="sentence-analysis-text">즉시성 + 행동 유도</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- LED 간접조명 -->
+            <div class="product-card">
+                <div class="product-header">
+                    <span class="product-icon">💡</span>
+                    <span class="product-title">LED 간접조명 (10문장)</span>
+                </div>
+                <div class="product-content">
+                    <div class="sentence-analysis">
+                        <span class="sentence-number">1</span>
+                        <span class="sentence-phase phase-hook">기(起)</span>
+                        <div class="sentence-text text-hook">"우와 이거 저만 몰랐나요?"</div>
+                        <div class="sentence-analysis-text">FOMO 유발 + 정보 격차</div>
+                    </div>
+                    
+                    <div class="sentence-analysis">
+                        <span class="sentence-number">3</span>
+                        <span class="sentence-phase phase-problem">승(承)</span>
+                        <div class="sentence-text text-problem">"간접등을 이곳저곳설치하려니 추가금이 부담돼서 못했거든요."</div>
+                        <div class="sentence-analysis-text">경제적 부담 공감</div>
+                    </div>
+                    
+                    <div class="sentence-analysis">
+                        <span class="sentence-number">4</span>
+                        <span class="sentence-phase phase-problem">승(承)</span>
+                        <div class="sentence-text text-problem">"근데 이 제품 발견하고 놀랐는데 가격 보고 더 놀랐어요."</div>
+                        <div class="sentence-analysis-text">2단계 놀라움 패턴</div>
+                    </div>
+                    
+                    <div class="sentence-analysis">
+                        <span class="sentence-number">5</span>
+                        <span class="sentence-phase phase-solution">전(轉)</span>
+                        <div class="sentence-text text-solution">"일단 설치가 너무 쉬워서 남편이 신나가지고 막 꾸미더라고요."</div>
+                        <div class="sentence-analysis-text">설치 편의성 + 가족 반응</div>
+                    </div>
+                    
+                    <div class="sentence-analysis">
+                        <span class="sentence-number">10</span>
+                        <span class="sentence-phase phase-cta">결(結)</span>
+                        <div class="sentence-text text-cta">"댓글에 '쉽다' 적어주시면 DM으로 링크 바로 보내드릴게요"</div>
+                        <div class="sentence-analysis-text">핵심 키워드 + 즉시성</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 우드 벽행거 -->
+            <div class="product-card">
+                <div class="product-header">
+                    <span class="product-icon">🪝</span>
+                    <span class="product-title">우드 벽행거 (8문장)</span>
+                </div>
+                <div class="product-content">
+                    <div class="sentence-analysis">
+                        <span class="sentence-number">1</span>
+                        <span class="sentence-phase phase-hook">기(起)</span>
+                        <div class="sentence-text text-hook">"이젠 행거도 공간 차지 않아요."</div>
+                        <div class="sentence-analysis-text">기존 상식 뒤집기</div>
+                    </div>
+                    
+                    <div class="sentence-analysis">
+                        <span class="sentence-number">2</span>
+                        <span class="sentence-phase phase-problem">승(承)</span>
+                        <div class="sentence-text text-problem">"이건 필요할 때마다 후크를 쏙 꺼내실 수 있는 행거예요."</div>
+                        <div class="sentence-analysis-text">핵심 차별점 설명</div>
+                    </div>
+                    
+                    <div class="sentence-analysis">
+                        <span class="sentence-number">4</span>
+                        <span class="sentence-phase phase-solution">전(轉)</span>
+                        <div class="sentence-text text-solution">"사용후에는 이렇게 착 닫으면 돼서 너무 편하고 깔끔하죠?"</div>
+                        <div class="sentence-analysis-text">사용법 + 만족감</div>
+                    </div>
+                    
+                    <div class="sentence-analysis">
+                        <span class="sentence-number">8</span>
+                        <span class="sentence-phase phase-cta">결(結)</span>
+                        <div class="sentence-text text-cta">"우드감성까지 챙긴 이 행거 댓글에 '쏙'적어주시면 DM보내드릴게요"</div>
+                        <div class="sentence-analysis-text">감성적 마무리 + 행동 유도</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 대본 분석기 섹션 -->
+        <div class="analyzer-section">
+            <div class="analyzer-header">
+                <h2>🤖 소이홈 대본 분석기</h2>
+                <p>대본을 입력하면 기승전결 구조를 분석하고 개선 방안을 제안해드려요</p>
+            </div>
+            
+            <div class="analyzer-container">
+                <div class="input-section">
+                    <textarea id="scriptInput" placeholder="분석하고 싶은 대본을 입력해주세요...&#10;&#10;예시:&#10;요즘 해외에서 이거 완전 핫해요.&#10;기존 제품은 이런 문제가 있는데...&#10;이 제품은 이렇게 해결해줘요.&#10;댓글에 '와!' 적어주세요."></textarea>
+                    <button id="analyzeBtn">분석하기</button>
+                </div>
+                
+                <div id="analysisResult" class="analysis-result" style="display: none;">
+                    <div class="result-header">
+                        <h3>📊 분석 결과</h3>
+                    </div>
+                    <div id="resultContent"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="insights-section">
+            <h2 class="insights-title">핵심 인사이트</h2>
+            
+            <div class="phase-distribution">
+                <div class="phase-stat">
+                    <div class="stat-number hook" style="color: #007AFF;">1.3</div>
+                    <div class="phase-stat-label">기(起) 평균</div>
+                </div
