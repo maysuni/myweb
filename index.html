@@ -662,13 +662,9 @@
 
     <script>
         function openAnalyzer() {
-            // 분석기 아티팩트의 ID를 사용해서 새 창으로 열기
-            const currentUrl = window.location.href;
-            const baseUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/'));
-            const analyzerUrl = baseUrl + '/script_analyzer';
-            
-            window.open(analyzerUrl, '_blank', 'width=900,height=800,scrollbars=yes,resizable=yes');
-        } ? 100 : (counts.solution < 2 ? 50 : 70);
+    // GitHub Pages에서는 같은 폴더의 analyzer.html로 연결
+    window.open('./analyzer.html', '_blank', 'width=900,height=800,scrollbars=yes,resizable=yes');
+} ? 100 : (counts.solution < 2 ? 50 : 70);
                 scores.cta = counts.cta === 1 ? 100 : (counts.cta === 0 ? 0 : 80);
             }
             
