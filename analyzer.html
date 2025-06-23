@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>소이홈 대본 분석기</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f7;
+        }
+        
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #1d1d1f;
+            margin-bottom: 30px;
+        }
+        
+        textarea {
+            width: 100%;
+            height: 200px;
+            padding: 16px;
+            border: 2px solid #e5e5e7;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 20px;
+            resize: vertical;
+        }
+        
+        button {
+            background: #007AFF;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-bottom: 30px;
+        }
+        
+        button:hover {
+            background: #0056b3;
+        }
+        
+        .result {
+            background: #f5f5f7;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .score {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .score-item {
+            background: white;
+            padding: 16px;
+            border-radius: 8px;
+            text-align: center;
+            min-width: 80px;
+        }
+        
+        .score-number {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        
+        .score-label {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .analysis {
+            background: white;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+        
+        .phase {
+            margin-bottom: 12px;
+        }
+        
+        .phase-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        
+        .hook { color: #007AFF; }
+        .problem { color: #FF3B30; }
+        .solution { color: #34C759; }
+        .cta { color: #FF9500; }
+        
+        .suggestions {
+            background: white;
+            padding: 16px;
+            border-radius: 8px;
+        }
+        
+        .suggestion {
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .suggestion::before {
+            content: "💡";
+            position: absolute;
+            left: 0;
+        }
+        
+        .type-recommendation {
+            background: linear-gradient(135deg, #007AFF, #5856D6);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .type-recommendation h3 {
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 소이홈 대본 분석기</h1>
+        
+        <textarea id="scriptText" placeholder="분석할 대본을 입력하세요...
+
+예시:
+요즘 해외에서 이거 완전 핫해요.
+기존 제품은 불편한데 이 제품은 다르더라고요.
+기능도 대박이고 가성비도 좋아요.
+댓글에 '와!' 적어주세요 DM 보내드릴게요."></textarea>
+        
+        <button onclick="analyze()">분석하기</button>
+        
+        <div id="result" class="result">
+            <div id="typeRecommendation" class="type-recommendation"></div>
+            <div id="scores" class="score"></div>
+            <div id="analysis" class="analysis"></div>
+            <div id="suggestions" class="suggestions"></div>
+        </div>
+    </div>
+
+    <script>
+        function analyze() {
+            const text = document.getElementById('scriptText').value.trim();
+            
+            if (!text) {
+                alert('대본을 입력해주세요!');
+                return;
+            }
+            
+            console.log('분석 시작:', text);
+            
+            // 문장 분리
+            const sentences = text.split(/[.!?。！？]/).filter(s => s.trim().length > 0);
+            console.log('문장들:', sentences);
+            
+            if (sentences.length === 0) {
+                alert('문장을 찾을 수 없습니다!');
+                return;
+            }
+            
+            // 제품 타입 판단
+            const productType = determineProductType(text);
+            
+            // 기승전결 분류
+            const classified = classifySentences(sentences, productType);
+            console.log('분류 결과:', classified);
+            
+            // 점수 계산
+            const scores = calculateScores(classified, productType);
+            console.log('점수:', scores);
+            
+            // 결과 표시
+            displayResults(classified, scores, sentences.length, productType);
+        }
+        
+        function determineProductType(text) {
+            const functionalKeywords = ['고민', '문제', '불편', '해결', '기능', '편리', '가성비', '공간', '수납', '활용'];
+            const designKeywords = ['예쁜', '이쁜', '디자인', '감성', '느낌', '분위기', '스타일', '봤지만', '처음봐요'];
+            
+            let functionalScore = 0;
+            let designScore = 0;
+            
+            functionalKeywords.forEach(keyword => {
+                if (text.includes(keyword)) functionalScore++;
+            });
+            
+            designKeywords.forEach(keyword => {
+                if (text.includes(keyword)) designScore++;
+            });
+            
+            return designScore > functionalScore ? 'design' : 'functional';
+        }
+        
+        function classifySentences(sentences, productType) {
+            const result = {
+                hook: [],
+                problem: [],
+                solution: [],
+                cta: []
+            };
+            
+            sentences.forEach((sentence, index) => {
+                const s = sentence.trim();
+                
+                // CTA 먼저 확인 (가장 명확함)
+                if (s.includes('댓글') || s.includes('DM') || s.includes('링크')) {
+                    result.cta.push({ text: s, index: index + 1 });
+                }
+                // 훅 패턴 확인
+                else if ((index === 0) || s.includes('해외에서') || s.includes('완전') || s.includes('핫') || s.includes('미쳤') || s.includes('우와') || s.includes('와') || s.includes('처음봐요') || s.includes('수많은')) {
+                    result.hook.push({ text: s, index: index + 1 });
+                }
+                // 제품 타입별 문제/해결 패턴
+                else if (productType === 'design') {
+                    // 디자인 중심 제품은 문제 제기보다 디자인 설명
+                    if (s.includes('케이스') || s.includes('모래') || s.includes('빛') || s.includes('이뻐') || s.includes('예뻐') || s.includes('디자인')) {
+                        result.problem.push({ text: s, index: index + 1 });
+                    } else {
+                        result.solution.push({ text: s, index: index + 1 });
+                    }
+                } else {
+                    // 기능 중심 제품
+                    if (s.includes('문제') || s.includes('불편') || s.includes('고민') || s.includes('근데') || s.includes('인데') || s.includes('부담')) {
+                        result.problem.push({ text: s, index: index + 1 });
+                    } else {
+                        result.solution.push({ text: s, index: index + 1 });
+                    }
+                }
+            });
+            
+            return result;
+        }
+        
+        function calculateScores(classified, productType) {
+            const counts = {
+                hook: classified.hook.length,
+                problem: classified.problem.length,
+                solution: classified.solution.length,
+                cta: classified.cta.length
+            };
+            
+            const scores = {};
+            
+            if (productType === 'design') {
+                // 디자인 중심 제품은 승(承) 부분이 디자인 설명이므로 더 중요
+                scores.hook = counts.hook >= 1 && counts.hook <= 2 ? 100 : (counts.hook === 0 ? 0 : 70);
+                scores.problem = counts.problem >= 2 && counts.problem <= 4 ? 100 : (counts.problem < 2 ? 60 : 70);
+                scores.solution = counts.solution >= 1 && counts.solution <= 3 ? 100 : (counts.solution === 0 ? 50 : 70);
+                scores.cta = counts.cta === 1 ? 100 : (counts.cta === 0 ? 0 : 80);
+            } else {
+                // 기능 중심 제품
+                scores.hook = counts.hook >= 1 && counts.hook <= 2 ? 100 : (counts.hook === 0 ? 0 : 70);
+                scores.problem = counts.problem >= 1 && counts.problem <= 3 ? 100 : (counts.problem === 0 ? 0 : 70);
+                scores.solution = counts.solution >= 2 && counts.solution <= 5 ? 100 : (counts.solution < 2 ? 50 : 70);
+                scores.cta = counts.cta === 1 ? 100 : (counts.cta === 0 ? 0 : 80);
+            }
+            
+            scores.overall = Math.round((scores.hook + scores.problem + scores.solution + scores.cta) / 4);
+            
+            return scores;
+        }
+        
+        function displayResults(classified, scores, totalSentences, productType) {
+            // 제품 타입 추천
+            const typeDiv = document.getElementById('typeRecommendation');
+            if (productType === 'design') {
+                typeDiv.innerHTML = '<h3>🎨 B타입: 디자인/감성 중심 제품</h3><p>심미성과 감성을 중시하는 고객을 타겟으로 하는 제품으로 분석됩니다.</p>';
+                typeDiv.style.background = 'linear-gradient(135deg, #FF3B30, #FF9500)';
+            } else {
+                typeDiv.innerHTML = '<h3>🔧 A타입: 기능/문제해결 중심 제품</h3><p>실용성과 문제해결을 중시하는 고객을 타겟으로 하는 제품으로 분석됩니다.</p>';
+                typeDiv.style.background = 'linear-gradient(135deg, #007AFF, #5856D6)';
+            }
+            
+            // 점수 표시
+            const scoresDiv = document.getElementById('scores');
+            scoresDiv.innerHTML = `
+                <div class="score-item">
+                    <div class="score-number" style="color: ${scores.overall >= 80 ? '#34C759' : scores.overall >= 60 ? '#FF9500' : '#FF3B30'}">${scores.overall}</div>
+                    <div class="score-label">종합</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-number hook">${scores.hook}</div>
+                    <div class="score-label">기(起) ${classified.hook.length}개</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-number problem">${scores.problem}</div>
+                    <div class="score-label">승(承) ${classified.problem.length}개</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-number solution">${scores.solution}</div>
+                    <div class="score-label">전(轉) ${classified.solution.length}개</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-number cta">${scores.cta}</div>
+                    <div class="score-label">결(結) ${classified.cta.length}개</div>
+                </div>
+            `;
+            
+            // 문장별 분석 표시
+            const analysisDiv = document.getElementById('analysis');
+            let analysisHTML = `<h3>📝 문장별 분석 (총 ${totalSentences}문장)</h3>`;
+            
+            const phases = [
+                { key: 'hook', name: productType === 'design' ? '기(起) - 시각적 임팩트' : '기(起) - 문제 상황 제시', class: 'hook' },
+                { key: 'problem', name: productType === 'design' ? '승(承) - 디자인 매력' : '승(承) - 공감대 형성', class: 'problem' },
+                { key: 'solution', name: productType === 'design' ? '전(轉) - 기능 보너스' : '전(轉) - 기능 중심 해결책', class: 'solution' },
+                { key: 'cta', name: productType === 'design' ? '결(結) - 희소성 구매 유도' : '결(結) - 행동 유도', class: 'cta' }
+            ];
+            
+            phases.forEach(phase => {
+                if (classified[phase.key].length > 0) {
+                    analysisHTML += `<div class="phase">`;
+                    analysisHTML += `<div class="phase-title ${phase.class}">${phase.name}</div>`;
+                    classified[phase.key].forEach(sentence => {
+                        analysisHTML += `<div>${sentence.index}. ${sentence.text}</div>`;
+                    });
+                    analysisHTML += `</div>`;
+                }
+            });
+            
+            analysisDiv.innerHTML = analysisHTML;
+            
+            // 개선 제안
+            const suggestionsDiv = document.getElementById('suggestions');
+            const suggestions = generateSuggestions(classified, totalSentences, productType);
+            
+            let suggestionsHTML = '<h3>💡 개선 제안</h3>';
+            suggestions.forEach(suggestion => {
+                suggestionsHTML += `<div class="suggestion">${suggestion}</div>`;
+            });
+            
+            suggestionsDiv.innerHTML = suggestionsHTML;
+            
+            // 결과 표시
+            document.getElementById('result').style.display = 'block';
+            document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        function generateSuggestions(classified, total, productType) {
+            const suggestions = [];
+            
+            if (productType === 'design') {
+                // 디자인 중심 제품 제안
+                if (classified.hook.length === 0) {
+                    suggestions.push("시각적 임팩트가 없어요! '수많은 ~봤지만 이렇게 예쁜건 처음' 같은 첫인상 강조를 추가하세요.");
+                }
+                
+                if (classified.problem.length < 2) {
+                    suggestions.push("디자인 매력 설명이 부족해요! 구체적인 시각적 묘사를 더 추가하세요.");
+                }
+                
+                if (classified.solution.length === 0) {
+                    suggestions.push("기능 보너스 어필이 없어요! '예쁘기만 한게 아니라 ~까지' 같은 부가 가치를 언급하세요.");
+                }
+                
+                if (classified.cta.length === 0) {
+                    suggestions.push("희소성 CTA가 없어요! '어렵게 찾아왔어요' 같은 특별함을 강조하세요.");
+                }
+            } else {
+                // 기능 중심 제품 제안
+                if (classified.hook.length === 0) {
+                    suggestions.push("훅이 없어요! '요즘 해외에서 ~가 핫해요' 같은 관심 끄는 문장을 추가하세요.");
+                }
+                
+                if (classified.problem.length === 0) {
+                    suggestions.push("문제 제기가 없어요! 기존 제품의 불편함을 언급해보세요.");
+                }
+                
+                if (classified.solution.length < 2) {
+                    suggestions.push("제품 설명이 부족해요! 구체적 기능과 장점을 더 설명하세요.");
+                }
+                
+                if (classified.cta.length === 0) {
+                    suggestions.push("CTA가 없어요! '댓글에 ~~ 적어주세요' 같은 행동 유도를 추가하세요.");
+                }
+            }
+            
+            if (total < 6) {
+                suggestions.push("대본이 너무 짧아요. 6-10문장 정도가 적당해요.");
+            }
+            
+            if (total > 10) {
+                suggestions.push("대본이 너무 길어요. 8-10문장 정도로 줄여보세요.");
+            }
+            
+            if (suggestions.length === 0) {
+                suggestions.push("완벽한 소이홈 스타일 대본이에요! 🎉");
+            }
+            
+            return suggestions;
+        }
+    </script>
+</body>
+</html>
